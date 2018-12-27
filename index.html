@@ -2,17 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Ready to write?</title>
+    <link rel="stylesheet" href="index.css"></link>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-
+    <p class="display"></p>
+    <p><span contenteditable="true"></span></p>
     <script>
-      // You can also require other files to run in this process
       require('./renderer.js')
     </script>
   </body>

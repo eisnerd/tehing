@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'Castledown';
+  src: url(fonts/castledown-regular.woff2);
+}
+@font-face {
+  font-family: 'Castledown Dotted';
+  src: url(fonts/castledown-dotted.woff2);
+}
+* { margin: 0; }
+html {
+  background: #3b4045;
+  color: white;
+  font-size: 120px;
+  overflow: hidden;
+}
+p {
+  letter-spacing: 0.05rem;
+  margin: 0.5rem 0;
+  width: 100vw;
+  height: 1rem;
+  line-height: 1rem;
+  font-size: 1rem;
+  font-family: 'Castledown';
+  padding: 0;
+  padding-top: 0.5em;
+  white-space: nowrap;
+  margin-bottom: 1rem;
+  overflow: visible;
+}
+.display {
+  text-align: center;
+}
+[contenteditable] {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.5rem;
+  text-align: left;
+  /* direction: rtl; */
+  /* text-overflow: ellipsis; */
+}
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+}
+[contenteditable]:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0.82em;
+  border-bottom: 2px white solid;
+  border-top: 2px white solid;
+  margin-top: 0.1em;
+  /* opacity: 0.6; */
+}
+[contenteditable]:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0.40em;
+  border-bottom: 1px white dashed;
+  /* opacity: 0.4; */
+}
+.dotted {
+  font-family: 'Castledown Dotted';
+}
+@media screen {
+  span:empty::before {
+    /* margin-top: -0.1rem; */
+    /* content: 'Type here'; */
+  }
+}
