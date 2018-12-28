@@ -127,6 +127,9 @@ let feedproc = async () => {
       next = {text: next, say: next};
     if (next.action == "repeat")
       next.say = goal;
+    if (next.delay)
+      await sleep(next.delay*1000);
+
     display.text(next.text);
     let x = next.say;
 
@@ -203,5 +206,5 @@ $('.cue').click(() => {
   let w = _.filter(_.keys(words), word => word.length == 3);
   goal = w[_.random(0, w.length)];
   feedqueue.unshift({action: "repeat", text: goal});
-  feed({text: ""});
+  feed({delay: 2, text: ""});
 });
