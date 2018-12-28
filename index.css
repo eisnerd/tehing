@@ -9,9 +9,17 @@
 * { margin: 0; }
 html {
   background: #3b4045;
-  color: white;
-  font-size: 120px;
+  color: white !important;
+  font-size: 120px !important;
+  box-sizing: inherit !important;
   overflow: hidden;
+}
+.material-icons {
+  font-size: 20px !important;
+}
+body > .btn {
+  float: left;
+  margin-left: 0.5rem;
 }
 p {
   letter-spacing: 0.05rem;
@@ -24,7 +32,7 @@ p {
   padding: 0;
   padding-top: 0.5em;
   white-space: nowrap;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   overflow: visible;
 }
 .display {

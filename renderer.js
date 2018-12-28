@@ -12,6 +12,9 @@ const speech = new textToSpeech.TextToSpeechClient();
 const DataURI = require('datauri');
 const datauri = new DataURI();
 
+const WordPOS = require('wordpos');
+const wordpos = new WordPOS();
+
 let r_phoneme = /tmcore_assets_phonics_phonemes_phoneme_angela_(.*)_ogg.ogg/;
 let r_word = /tmcore_assets_phonics_words_audio_(.*)_ogg.ogg/;
 let phonemes = window.phonemes = {};
@@ -92,9 +95,25 @@ async function play(sound, cont) {
 
 let display = $('.display');
 
+var goal = "";
 let feedqueue = [];
 var feedthrottle = 0;
 let feedpause = true;
+let synthesize = async x => {
+  var sound = synth[x];
+  if (!sound) {
+    console.log("No sound for '${x}'");
+    const [response] = await speech.synthesizeSpeech({
+        input: {text: x},
+        voice: {languageCode: 'en-GB', ssmlGender: 'NEUTRAL'},
+        audioConfig: {audioEncoding: 'MP3'},
+      });
+    sound = synth[x] = new Howl({
+      src: datauri.format('.mp3', response.audioContent).content
+    });
+  }
+  return sound;
+};
 let feedproc = async () => {
   const now = Date.now();
   let remaining = 1000 - now + feedthrottle;
@@ -102,27 +121,29 @@ let feedproc = async () => {
     await sleep(remaining);
   feedthrottle = now;
 
-  let x = feedqueue.pop();
-  if (x) {
-    display.text(x);
+  let next = feedqueue.pop();
+  if (next) {
+    if (!_.isObject(next))
+      next = {text: next, say: next};
+    if (next.action == "repeat")
+      next.say = goal;
+    display.text(next.text);
+    let x = next.say;
+
+    if (next.action != "repeat" && goal == x) {
+      feedqueue.push({say: 'Yes! You wrote the word "'+goal+'"'});
+      goal = "";
+    }
+
     var sound;
-    if (sound = phonemes[x])
+    if (!x)
+      feedproc();
+    else if (sound = phonemes[x])
       play(sound.sound, feedproc);
     else if (sound = words[x])
       play(sound, feedproc);
     else {
-      sound = synth[x];
-      if (!sound) {
-        console.log("No sound for '${x}'");
-        const [response] = await speech.synthesizeSpeech({
-            input: {text: x},
-            voice: {languageCode: 'en-GB', ssmlGender: 'NEUTRAL'},
-            audioConfig: {audioEncoding: 'MP3'},
-          });
-        sound = synth[x] = new Howl({
-          src: datauri.format('.mp3', response.audioContent).content
-        });
-      }
+      sound = await synthesize(x);
       play(sound, feedproc);
     }
   } else {
@@ -143,7 +164,11 @@ $('[contenteditable]')
   .first().focus()
   .keydown((e) => {
     //console.log(e);
-    if (/\w/.test(String.fromCharCode(e.keyCode))) {
+    let button = $('[data-key="' + e.key + '"]');
+    if (button.length) {
+      button.click();
+      return false;
+    } else if (/\w/.test(String.fromCharCode(e.keyCode))) {
       let m = r_phonemes.exec($(e.target).text() + e.key);
       if (m) {
         var phoneme = phonemes[m[1]];
@@ -163,4 +188,15 @@ $('[contenteditable]')
 
       return e.keyCode == 32 && !/\s+$/.test(txt);
     }
-  })
+  });
+
+$('.repeat').click(() => {
+  feed({action: "repeat"});
+});
+
+$('.cue').click(() => {
+  let w = _.filter(_.keys(words), word => word.length == 3);
+  goal = w[_.random(0, w.length)];
+  feedqueue.unshift({action: "repeat", text: goal});
+  feed({text: ""});
+});
