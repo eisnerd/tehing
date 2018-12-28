@@ -33,6 +33,7 @@ _.each(fs.readdirSync(res), f => {
     return;
   }
 });
+let r_phonemes = new RegExp("(" + _.keys(phonemes).join("|") + ")$");
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -102,7 +103,11 @@ $('[contenteditable]')
   .keydown((e) => {
     //console.log(e);
     if (/\w/.test(String.fromCharCode(e.keyCode))) {
-      feed(e.key);
+      let m = r_phonemes.exec($(e.target).text() + e.key);
+      if (m)
+        feed(m[1]);
+      else
+        feed(e.key);
     } else if (/^\s+$/.test(String.fromCharCode(e.keyCode))) {
       let txt = $(e.target).text();
       let y = /(\S*)\s*$/.exec(txt)[1];
