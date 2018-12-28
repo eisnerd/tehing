@@ -6,6 +6,7 @@ const $ = require("jquery");
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 const {Howl, Howler} = require('howler');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speech = new textToSpeech.TextToSpeechClient();
@@ -82,16 +83,15 @@ _.each(phonemes, p => {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-async function play(sound, cont) {
+let play = util.promisify(async function(sound, cont) {
   if (sound)
     sound.on('end', () => {
-      console.log('end');
       sound.off('end');
       cont();
     }).play();
   else
     cont();
-}
+});
 
 let display = $('.display');
 
@@ -135,17 +135,19 @@ let feedproc = async () => {
       goal = "";
     }
 
+
     var sound;
-    if (!x)
-      feedproc();
-    else if (sound = phonemes[x])
-      play(sound.sound, feedproc);
-    else if (sound = words[x])
-      play(sound, feedproc);
-    else {
-      sound = await synthesize(x);
-      play(sound, feedproc);
+    if (x) {
+      sound = phonemes[x];
+      if (sound)
+        sound = sound.sound;
+      else
+        sound = words[x];
+      if (!sound)
+        sound = await synthesize(x);
+      await play(sound);
     }
+    feedproc();
   } else {
     //display.text("");
     feedpause = true;
