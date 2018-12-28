@@ -34,18 +34,40 @@ _.each(fs.readdirSync(res), f => {
   }
 });
 
-let display = $('.display');
-let feedqueue = [];
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function play(sound, cont) {
+  if (sound)
+    sound.on('end', () => {
+      console.log('end');
+      sound.off('end');
+      cont();
+    }).play();
+  else
+    cont();
+}
 
-let feedproc = _.throttle(async () => {
+let display = $('.display');
+
+let feedqueue = [];
+var feedthrottle = 0;
+let feedpause = true;
+let feedproc = async () => {
+  const now = Date.now();
+  let remaining = 1000 - now + feedthrottle;
+  if (remaining > 0)
+    await sleep(remaining);
+  feedthrottle = now;
+
   let x = feedqueue.pop();
   if (x) {
     display.text(x);
     var sound;
     if (sound = phonemes[x])
-      sound.play();
+      play(sound, feedproc);
     else if (sound = words[x])
-      sound.play();
+      play(sound, feedproc);
     else {
       sound = synth[x];
       if (!sound) {
@@ -59,20 +81,20 @@ let feedproc = _.throttle(async () => {
           src: datauri.format('.mp3', response.audioContent).content
         });
       }
-      if (sound)
-        sound.play();
+      play(sound, feedproc);
     }
-    feedproc();
   } else {
     //display.text("");
+    feedpause = true;
   }
-}, 1000, {
-  trailing: true
-});
+};
 
 let feed = (x) => {
   feedqueue.unshift(x);
-  feedproc();
+  if (feedpause) {
+    feedpause = false;
+    feedproc();
+  }
 }
 
 $('[contenteditable]')
