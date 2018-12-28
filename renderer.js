@@ -131,10 +131,13 @@ let feedproc = async () => {
     let x = next.say;
 
     if (next.action != "repeat" && goal == x) {
-      feedqueue.push({say: 'Yes! You wrote the word "'+goal+'"'});
+      feedqueue.push({play: "res/raw/tm2_assets_audio_phonics_narr_yesyoumadetheword_ogg.ogg", say: goal});
       goal = "";
     }
 
+    if (next.play) {
+      await play(new Howl({src: next.play}));
+    }
 
     var sound;
     if (x) {
