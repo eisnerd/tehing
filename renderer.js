@@ -208,3 +208,16 @@ $('.cue').click(() => {
   feedqueue.unshift({action: "repeat", text: goal});
   feed({delay: 2, text: ""});
 });
+
+let colour_active = false;
+let colour_btn = $('.colour').click(() => {
+  colour_active = !colour_active;
+})
+const color = require('color');
+var hue = 0;
+setInterval(() => {
+  if (colour_active) {
+    $('html, span').attr('style', 'color: ' + (hue > 360 ? 'white;' : 'hsl(' + hue + ', 100%, 70%) !important;'));
+    hue = (hue + 5) % 400;
+  }
+}, 200);
