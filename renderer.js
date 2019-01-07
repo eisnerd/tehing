@@ -176,6 +176,9 @@ let feed = (x) => {
 
 $('[contenteditable]')
   .first().focus()
+  .blur(e => {
+    e.target.focus();
+  })
   .keydown((e) => {
     //console.log(e);
     let button = $('[data-key="' + e.key + '"]');
