@@ -34,7 +34,7 @@ let alternatives = {
   'ai': ["a\\we", "ay", "ei", "eigh", "ey", "ae", "ea"],
   'ie': ["i\\we", "igh", "\\By$", "\\bei", "\\bai", "\\Bye", "uy"],
   'or': ["al", "au", "aw", "ore", "ough", "ar", "oar", "our", "oor"],
-  'z': ["\\Bs$", "\\bse$", "ze"],
+  'z': ["\\Bs$", "\\Bse$", "ze"],
   'v': ["ve"],
   'oo': ["ue", "u\\we", "ew", "\\bu$", "\\bo$", "ui", "ou", "ough", "eu"],
   'w': ["wh", "ui"],
@@ -45,7 +45,7 @@ let alternatives = {
   'ue': ["u\\we", "ew", "\\bu", "eu"],
   'er': ["ir", "ur", "ear", "or", "our", "re"],
   'ar': ['ear', 'al', '\\bau', 'er'],
-  'air': ['are', 'ear', 'ere', 'aer'],
+  'air': ['\\Bare', '\\Bear', '\\Bere', 'aer'],
   'zh': ["\\Bsi", "\\Bs\\B", "\\Bg\\B", "\\Bge$"],
   'ool': ["\\Ble", "\\Bal$", "\\Bil$", "\\Bol$", "\\Bul"]
 };
@@ -58,7 +58,7 @@ _.each(fs.readdirSync(res), f => {
   if (match) {
     let s = sound();
     _.each((alternatives[match[1]] || []).concat([match[1]]), phoneme => {
-      if (!phonemes[phoneme] || phoneme == match[1] || alternatives[phoneme]) {
+      if (!phonemes[phoneme] || phoneme == match[1]) {
         phonemes[phoneme] = {
           r: new RegExp("^" + phoneme + "$"),
           spelling: phoneme.replace(/[.]|\\w/g, "_").replace(/\\.|\(.*\)|\[.*\]|\W/g, ""),
@@ -133,8 +133,8 @@ let feedproc = async () => {
     display.text(next.text);
     let x = next.say;
 
-    if (next.action != "repeat" && goal == x) {
-      feedqueue.push({play: "res/raw/tm2_assets_audio_phonics_narr_yesyoumadetheword_ogg.ogg", say: goal});
+    if (next.action != "repeat" && x && goal == x.trim()) {
+      feedqueue.push({play: "res/raw/tm2_assets_audio_phonics_narr_yesyoumadetheword_ogg.ogg", say: x});
       goal = "";
     }
 
@@ -142,15 +142,21 @@ let feedproc = async () => {
       await play(new Howl({src: next.play}));
     }
 
-    var sound;
+    var sound = undefined;
     if (x) {
-      sound = phonemes[x];
-      if (sound)
-        sound = sound.sound;
-      else
+      let y = x;
+      x = x.trim();
+      if (x != y || x.length > 2)
         sound = words[x];
-      if (!sound)
+      if (!sound) {
+        sound = phonemes[x];
+        if (sound)
+          sound = sound.sound;
+        else
+          sound = words[x];
+          if (!sound)
         sound = await synthesize(x);
+      }
       await play(sound);
     }
     feedproc();
@@ -192,7 +198,7 @@ $('[contenteditable]')
       let txt = $(e.target).text();
       let y = /(\S*)\s*$/.exec(txt)[1];
       if (y)
-        feed(y);
+        feed(y + " ");
 
       return e.keyCode == 32 && !/\s+$/.test(txt);
     }
