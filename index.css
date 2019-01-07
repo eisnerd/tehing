@@ -10,6 +10,9 @@
   margin: 0;
   transition: color 0.3s linear;
 }
+.hidden {
+  visibility: collapse;
+}
 html {
   background: #3b4045;
   color: white !important;
