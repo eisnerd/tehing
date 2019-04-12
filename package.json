@@ -1,23 +1,34 @@
 {
-  "name": "electron-quick-start",
+  "name": "tehing",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "An elementary reading and writing tool",
   "main": "main.js",
   "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://gitlab.com/eisnerd/tehing",
+  "homepage": "https://gitlab.com/eisnerd/tehing",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "writing",
+    "reading",
+    "children",
+    "phonics",
+    "learning",
+    "vorticons"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "David Eisner <david.eisner@oriel.oxon.org>",
+  "license": "GPL-2.0-only",
+  "build": {
+    "appId": "to.uk.eisd.tehing",
+    "mac": {
+      "category": "public.app-category.education"
+    }
+  },
   "devDependencies": {
     "electron": "^3.0.7",
+    "electron-builder": "^20.38.5",
     "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
