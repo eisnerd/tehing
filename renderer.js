@@ -15,10 +15,8 @@ const datauri = new DataURI();
 
 const WordPOS = require('wordpos');
 const wordpos = new WordPOS();
-window.wordpos = wordpos;
-const googleImages = require('google');
 
-let r_phoneme = /tmcore_assets_phonics_phonemes_phoneme_angela_(\D*)\d*_ogg.ogg/;
+let r_phoneme = /tmcore_assets_phonics_phonemes_phoneme_angela_(.*)_ogg.ogg/;
 let r_word = /tmcore_assets_phonics_words_audio_(.*)_ogg.ogg/;
 let phonemes = window.phonemes = {};
 let words = window.words = {}
@@ -96,7 +94,6 @@ let play = util.promisify(async function(sound, cont) {
 });
 
 let display = $('.display');
-let hint = $('.hint');
 
 var goal = "";
 let feedqueue = [];
@@ -135,9 +132,6 @@ let feedproc = async () => {
 
     display.text(next.text);
     let x = next.say;
-
-    if (!goal)
-      hint.removeAttr('src');
 
     if (next.action != "repeat" && x && goal == x.trim()) {
       feedqueue.push({play: "res/raw/tm2_assets_audio_phonics_narr_yesyoumadetheword_ogg.ogg", say: x});
@@ -220,20 +214,8 @@ $('.repeat').click(() => {
 $('.cue').click(() => {
   let w = _.filter(_.keys(words), word => word.length == 3);
   goal = w[_.random(0, w.length)];
-  googleImages(goal, (err, results) => {
-    if (results && results.links)
-      for (let l of results.links)
-        if (l.img) {
-          wordpos.getPOS(goal, (pos) => {
-            if (pos.nouns) {
-              hint.attr('src', l.img);
-            }
-          });
-          break;
-        }
-    feedqueue.unshift({action: "repeat", text: goal});
-    feed({delay: 2, text: ""});
-  });
+  feedqueue.unshift({action: "repeat", text: goal});
+  feed({delay: 2, text: ""});
 });
 
 let colour_active = false;

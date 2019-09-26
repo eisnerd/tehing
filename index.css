@@ -26,10 +26,11 @@ html {
 }
 body > .btn {
   float: left;
-  margin: 0.5rem 0 0 0.5rem;
+  margin-left: 0.5rem;
 }
 p {
   letter-spacing: 0.05rem;
+  margin: 0.5rem 0;
   width: 100vw;
   height: 1rem;
   line-height: 1rem;
@@ -41,19 +42,8 @@ p {
   /* margin-bottom: 1rem; */
   overflow: visible;
 }
-.display-box {
-  display: table;
-}
-.display-box * {
-  display: table-cell;
-  height: 1rem;
-}
-.hint {
-  margin: 0 0.4rem;
-}
 .display {
   text-align: center;
-  width: 100%;
 }
 [contenteditable] {
   display: block;
