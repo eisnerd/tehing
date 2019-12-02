@@ -43,8 +43,8 @@ let alternatives = {
   'ou': ["ow", "ough"],
   'oi': ["oy", "uoy"],
   'ue': ["u\\we", "ew", "\\bu", "eu"],
-  'er': ["ir", "ur", "ear", "or", "our", "re"],
-  'ar': ['ear', 'al', '\\bau', 'er'],
+  'ur': ["ir", "er", "ear", "or", "our", "re"],
+  'ar': ['ear', 'al', '\\bau'],
   'air': ['\\Bare', '\\Bear', '\\Bere', 'aer'],
   'zh': ["\\Bsi", "\\Bs\\B", "\\Bg\\B", "\\Bge$"],
   'ool': ["\\Ble", "\\Bal$", "\\Bil$", "\\Bol$", "\\Bul"]
