@@ -29,7 +29,8 @@
   "devDependencies": {
     "electron": "^3.0.7",
     "electron-builder": "^20.38.5",
-    "electron-rebuild": "^1.8.2"
+    "electron-rebuild": "^1.8.2",
+    "string.prototype.matchall": "^4.0.0"
   },
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.4.0",

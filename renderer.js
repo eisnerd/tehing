@@ -7,6 +7,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const matchAll = require('string.prototype.matchall').shim();
 const {Howl, Howler} = require('howler');
 const textToSpeech = require('@google-cloud/text-to-speech');
 const speech = new textToSpeech.TextToSpeechClient();
@@ -174,6 +175,58 @@ let feed = (x) => {
   }
 }
 
+function logfile() {
+  fs.mkdir("log", e => e && e.code != "EEXIST" && console.log(e))
+  return "log/" + new Date().toISOString().split('T')[0] + ".txt";
+}
+
+function show_log(txt) {
+  $("<p/>")
+    .prependTo($('.log'))
+    .text(txt);
+}
+
+fs.readFile(logfile(), (err, data) => {
+  if (data) {
+    for (const line of data.toString().matchAll(/(?<=^|[\r\n])[^\r\n]+(?=$|[\r\n][\r\n])/g))
+      if (line[0].length + line.index == line.input.length)
+        $('[contenteditable]')
+          .first().text(line[0])
+          .each(function() { // move the caret to the end
+            var range = document.createRange();
+            range.setStart(this, 1);
+            range.collapse(false);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+          });
+      else
+        show_log(line[0]);
+  }
+});
+
+function log(txt, cont) {
+  let file = logfile();
+  fs.readFile(file, (err, data) => {
+    if (err && err.code != "ENOENT") // create if not exists
+      throw err;
+
+    let doc = (data || "").toString();
+    let line = doc.replace(/(.|\s)*[\r\n]+/, "");
+    if (txt.length >= line.length && txt.slice(0, line.length) == line)
+      doc = doc.slice(0, doc.length - line.length);
+    else
+      doc += "\n";
+
+    fs.writeFile(file, doc + txt, err => {
+      if (err)
+        throw err;
+      if (cont)
+        cont();
+    });
+  });
+}
+
 $('[contenteditable]')
   .first().focus()
   .blur(e => {
@@ -197,8 +250,16 @@ $('[contenteditable]')
           feed(m[1]);
       } else
         feed(e.key);
+    } else if (/^[\r\n]+$/.test(String.fromCharCode(e.keyCode))) {
+      let txt = $(e.target).text().trim();
+
+      show_log(txt);
+      log(txt + "\n\n", () => $(e.target).text(''));
+
+      return false;
     } else if (/^\s+$/.test(String.fromCharCode(e.keyCode))) {
       let txt = $(e.target).text();
+      log(txt.trim());
       let y = /(\S*)\s*$/.exec(txt)[1];
       if (y)
         feed(y + " ");
