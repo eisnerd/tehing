@@ -29,18 +29,17 @@
   "devDependencies": {
     "electron": "^3.0.7",
     "electron-builder": "^20.38.5",
-    "electron-rebuild": "^1.8.2",
-    "string.prototype.matchall": "^4.0.0"
+    "electron-rebuild": "^1.8.2"
   },
   "dependencies": {
     "@google-cloud/text-to-speech": "^0.4.0",
     "color": "^3.1.0",
     "datauri": "^1.1.0",
-    "google": "^2.1.0",
     "howler": "^2.1.1",
     "jquery": "^3.3.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "materialize-css": "^1.0.0",
+    "string.prototype.matchall": "^4.0.0",
     "wordpos": "^1.2.0"
   }
 }
