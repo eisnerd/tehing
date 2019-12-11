@@ -186,6 +186,15 @@ function show_log(txt) {
     .text(txt);
 }
 
+function select_end_of(el) {
+  var range = document.createRange();
+  range.setStart(el, 1);
+  range.collapse(false);
+  var selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
 fs.readFile(logfile(), (err, data) => {
   if (data) {
     for (const line of data.toString().matchAll(/(?<=^|[\r\n])[^\r\n]+(?=$|[\r\n][\r\n])/g))
@@ -193,12 +202,7 @@ fs.readFile(logfile(), (err, data) => {
         $('[contenteditable]')
           .first().text(line[0])
           .each(function() { // move the caret to the end
-            var range = document.createRange();
-            range.setStart(this, 1);
-            range.collapse(false);
-            var selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
+            select_end_of(this);
           });
       else
         show_log(line[0]);
@@ -244,6 +248,16 @@ $('[contenteditable]')
     if (button.length) {
       button.click();
       return false;
+    } else if (e.keyCode == 8) { // backspace
+      // go back to edit the last log entry
+      // if backspace is pressed on an empty line
+      if ($(e.target).text().length == 0) {
+        let last_log = $('.log p:first');
+        $(e.target).text(last_log.text());
+        last_log.remove();
+        select_end_of(e.target);
+        return false;
+      }
     } else if (/\w/.test(String.fromCharCode(e.keyCode))) {
       let m = r_phonemes.exec($(e.target).text() + e.key);
       if (m) {
