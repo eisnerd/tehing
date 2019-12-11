@@ -212,7 +212,13 @@ function log(txt, cont) {
       throw err;
 
     let doc = (data || "").toString();
-    let line = doc.replace(/(.|\s)*[\r\n]+/, "");
+    var line = doc;
+    var end = line.lastIndexOf("\n");
+    if (end >= 0)
+      line = line.slice(end + 1);
+    end = line.lastIndexOf("\r");
+    if (end >= 0)
+      line = line.slice(end + 1);
     if (txt.length >= line.length && txt.slice(0, line.length) == line)
       doc = doc.slice(0, doc.length - line.length);
     else
