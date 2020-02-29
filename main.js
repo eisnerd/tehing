@@ -1,3 +1,21 @@
+const path = require('path');
+const fs = require('fs');
+//const process = require('process');
+
+if (!fs.existsSync(process.env.GOOGLE_APPLICATION_CREDENTIALS)) {
+  process.env.GOOGLE_APPLICATION_CREDENTIALS = path.resolve(process.execPath, "../google-services.json")
+
+  if (!fs.existsSync(process.env.GOOGLE_APPLICATION_CREDENTIALS)) {
+    let pack = path.resolve(process.execPath, "../resources/app.asar")
+    if (fs.existsSync(pack))
+      fs.copyFileSync(path.join(pack, "google-services.json"), process.env.GOOGLE_APPLICATION_CREDENTIALS);
+  }
+
+  if (!fs.existsSync(process.env.GOOGLE_APPLICATION_CREDENTIALS))
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = path.resolve(process.execPath, "../../../../google-services.json")
+}
+
+
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
 

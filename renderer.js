@@ -14,8 +14,8 @@ const speech = new textToSpeech.TextToSpeechClient();
 const DataURI = require('datauri');
 const datauri = new DataURI();
 
-const WordPOS = require('wordpos');
-const wordpos = new WordPOS();
+//const WordPOS = require('wordpos');
+//const wordpos = new WordPOS();
 
 let r_phoneme = /tmcore_assets_phonics_phonemes_phoneme_angela_(.*)_ogg.ogg/;
 let r_word = /tmcore_assets_phonics_words_audio_(.*)_ogg.ogg/;
